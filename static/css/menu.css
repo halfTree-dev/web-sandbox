@@ -1,0 +1,62 @@
+/* 美化菜单栏悬浮窗 */
+#menu-box {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    right: 10px;
+    top: 10px;
+    width: 300px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+#menu-box .menu-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#current-level {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#player-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#player-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    color: #555;
+}
+
+#player-list li:last-child {
+    border-bottom: none;
+}
+
+#disconnect-button {
+    padding: 10px;
+    background-color: #FF4D4D;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#disconnect-button:hover {
+    background-color: #CC0000;
+}

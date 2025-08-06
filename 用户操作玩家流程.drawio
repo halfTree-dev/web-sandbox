@@ -1,0 +1,79 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15">
+  <diagram name="第 1 页" id="8AJL-jX_8ZvPkxG1Lr94">
+    <mxGraphModel dx="925" dy="661" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-1" target="MC_RMOd_7PoZx3Qgy7tt-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-1" value="用户访问游戏界面" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="350" y="60" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-2" target="MC_RMOd_7PoZx3Qgy7tt-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-2" value="要求用户输入用户ID与密码" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="323.75" y="140" width="152.5" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-4" target="MC_RMOd_7PoZx3Qgy7tt-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-4" value="建立用户 Websocket 连接和用户 ID 的映射" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="324.69" y="300" width="152.5" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-5" target="MC_RMOd_7PoZx3Qgy7tt-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-5" value="验证正确性" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="320.94" y="210" width="158.12" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-8" value="" style="edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="MC_RMOd_7PoZx3Qgy7tt-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="480" y="240" as="sourcePoint" />
+            <mxPoint x="530" y="190" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="540" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-10" value="有误" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="500" y="190" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-11" value="正确" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="405" y="268" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-12" target="MC_RMOd_7PoZx3Qgy7tt-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-12" value="用户选择当前正在运行的 Level 并进入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="324.69" y="374" width="152.5" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-14" target="MC_RMOd_7PoZx3Qgy7tt-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-14" target="MC_RMOd_7PoZx3Qgy7tt-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-14" value="Level 中 PlayerController&lt;div&gt;是否有该 ID 的记录&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="296.41" y="450" width="209.06" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-16" target="MC_RMOd_7PoZx3Qgy7tt-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-16" value="新建用户 Player 实例" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="490" y="540" width="152.5" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="MC_RMOd_7PoZx3Qgy7tt-19" target="MC_RMOd_7PoZx3Qgy7tt-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-19" value="建立 Websocket 连接到用户&lt;div&gt;Player 对象的映射&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="324.69" y="580" width="152.5" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="MC_RMOd_7PoZx3Qgy7tt-26" value="player.online = true&lt;div&gt;玩家可继续操作对象&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="323.75" y="650" width="152.5" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

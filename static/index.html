@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Sandbox Demo</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div id="chatbox" class="floating-window">
+        <div id="log"></div>
+        <div id="input-container">
+            <input type="text" id="message" placeholder="输入消息...">
+            <button id="send">发送</button>
+        </div>
+    </div>
+    <link rel="stylesheet" href="/css/chatbox.css">
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        function resizeCanvas() {
+            const canvas = document.getElementById('gameCanvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('DOMContentLoaded', resizeCanvas);
+    </script>
+    <script src="/js/websockets.js"></script>
+    <script src="/js/camera.js"></script>
+    <script src="/js/assets.js"></script>
+    <script src="/js/level.js"></script>
+    <script src="/js/input.js"></script>
+    <script src="/js/chatbox.js"></script>
+
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>登录</h2>
+            <label for="login-username">用户ID:</label>
+            <input type="text" id="login-username" placeholder="输入用户ID">
+            <label for="login-password">密码:</label>
+            <input type="password" id="login-password" placeholder="输入密码">
+            <button id="login-submit">登录</button>
+        </div>
+    </div>
+    <link rel="stylesheet" href="/css/loginbox.css">
+    <script src="/js/login.js"></script>
+
+    <div id="lobby-box" class="modal">
+        <div class="modal-content">
+            <h2>大厅</h2>
+            <p id="connected-players">已连接人数: 0</p>
+            <div id="level-list" class="scrollable-list">
+                <!-- 动态生成的关卡列表 -->
+            </div>
+        </div>
+    </div>
+    <link rel="stylesheet" href="/css/lobby.css">
+    <script src="/js/lobby.js"></script>
+
+    <div id="menu-box" class="menu-modal">
+        <div class="menu-content">
+            <h2 id="current-level">当前关卡: 未知</h2>
+            <ul id="player-list">
+                <!-- 动态生成的玩家列表 -->
+            </ul>
+            <button id="disconnect-button">断开连接</button>
+        </div>
+    </div>
+    <link rel="stylesheet" href="/css/menu.css">
+    <script src="/js/menu.js"></script>
+</body>
+
+</html>

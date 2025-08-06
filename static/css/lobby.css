@@ -1,0 +1,66 @@
+#lobby-box {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 25%;
+    top: 10%;
+    width: 50%;
+    height: 80%;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+#lobby-box .modal-content {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#connected-players {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.scrollable-list {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-wrap: wrap; /* 允许内容换行 */
+    gap: 10px; /* 列表项之间的间距 */
+    justify-content: space-between; /* 横向分布 */
+}
+
+.scrollable-list .level-item {
+    flex: 1 1 20%; /* 每个列表项占据 20% 的列表高度 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scrollable-list .level-item button {
+    padding: 5px 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.scrollable-list .level-item button:hover {
+    background-color: #0056b3;
+}

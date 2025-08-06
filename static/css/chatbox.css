@@ -1,0 +1,63 @@
+.floating-window {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 16px;
+    z-index: 1000;
+    width: 30vw; /* 宽度占屏幕的 30% */
+    height: 35vh; /* 高度占屏幕的 35% */
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-sizing: border-box; /* 包括内边距在宽高内 */
+}
+
+#log {
+    flex: none; /* 固定大小 */
+    width: 25vw; /* 宽度占屏幕的 1/4 */
+    height: 25vh; /* 高度占屏幕的 1/4 */
+    overflow-y: auto; /* 垂直滚动条 */
+    background: #f5f5f5;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
+    font-size: 18px; /* 字体加大 */
+    box-sizing: border-box; /* 包括内边距在宽度内 */
+}
+
+#input-container {
+    display: flex;
+    align-items: center;
+}
+
+#message {
+    flex: 1;
+    font-size: 18px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-right: 8px;
+}
+
+#send {
+    border-radius: 4px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#send:hover {
+    background-color: #0056b3;
+}
+
+#player-id {
+    color: #333; /* 深色文字，便于阅读 */
+    font-weight: bold;
+}
