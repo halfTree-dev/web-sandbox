@@ -3,8 +3,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const TPS = 30;
 
-const PLAYER_WIDTH = 32;
-const PLAYER_HEIGHT = 32;
+const PLAYER_WIDTH = 45;
+const PLAYER_HEIGHT = 10;
 
 class Player {
     constructor(id, name, x, y) {
@@ -127,7 +127,9 @@ class Player {
      * 更新玩家的移动
      * @returns {Object} - 返回一个包含玩家位置和 ID 的消息对象，仅当玩家有移动时返回
      */
-    move() {
+    getMoveDestination() {
+        let currX = this.x;
+        let currY = this.y;
         const vector = [0, 0];
         if (this.keyStates['w'] || this.keyStates['ArrowUp']) {
             vector[1] -= 1;
@@ -145,18 +147,10 @@ class Player {
 
         if (magnitude > 0) {
             const unitVector = [vector[0] / magnitude, vector[1] / magnitude];
-            this.x += unitVector[0] * this.speed / TPS;
-            this.y += unitVector[1] * this.speed / TPS;
-            const message = {
-                type: 'update_player',
-                player: {
-                    id: this.id,
-                    x: Number(this.x.toFixed(1)),
-                    y: Number(this.y.toFixed(1)),
-                }
-            };
-            return message;
+            currX += unitVector[0] * this.speed / TPS;
+            currY += unitVector[1] * this.speed / TPS;;
         }
+        return {"x": currX, "y": currY};
     }
 
     setPlayerOffline() {

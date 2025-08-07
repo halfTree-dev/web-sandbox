@@ -91,7 +91,7 @@ async function handleJoinLevel(parsedMessage, clientID) {
                 const player = new Player(clientID, userID, 0, 0);
                 playersDic[clientID] = player;
                 level.playerController.addPlayer(player);
-                player.addItem(new Item("sand", 256));
+                player.addItem(new Item("brick", 256));
                 player.addItem(new Item("deleter", 1));
                 player.online = true;
                 ws.send(JSON.stringify({ type: 'join_level_callback', success: true, info: '欢迎首次进入' }));

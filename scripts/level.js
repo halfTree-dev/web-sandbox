@@ -3,7 +3,7 @@ const PlayerController = require('./playerController');
 const { Item, itemProperties } = require('./item');
 const { CHUNK_WIDTH, CHUNK_HEIGHT, Chunk } = require('./chunk');
 const { PLAYER_WIDTH, PLAYER_HEIGHT, Player } = require('./player');
-const Block = require('./block');
+const { Block, blockProperties } = require('./block');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
@@ -104,6 +104,60 @@ class Level {
                 }));
             }
         }
+    }
+
+    handlePlayerMovement(player, playerIDList, webSocketsDic) {
+        const currPlayerPos = {"x": player.x, "y": player.y};
+        const targetPlayerPos = player.getMoveDestination();
+        if (currPlayerPos.x === targetPlayerPos.x && currPlayerPos.y === targetPlayerPos.y) { return; }
+        let finalPlayerX = player.x; let finalPlayerY = player.y;
+        if (!this.checkPlayerCollision(targetPlayerPos)) {
+            finalPlayerX = targetPlayerPos.x; finalPlayerY = targetPlayerPos.y;
+        }
+        else if (!this.checkPlayerCollision({"x": targetPlayerPos.x, "y": currPlayerPos.y})) {
+            finalPlayerX = targetPlayerPos.x; finalPlayerY = currPlayerPos.y;
+        }
+        else if (!this.checkPlayerCollision({"x": currPlayerPos.x, "y": targetPlayerPos.y})) {
+            finalPlayerX = currPlayerPos.x; finalPlayerY = targetPlayerPos.y;
+        }
+        else {
+            finalPlayerX = currPlayerPos.x; finalPlayerY = currPlayerPos.y;
+            return;
+        }
+        player.x = finalPlayerX;
+        player.y = finalPlayerY;
+        for (const id of playerIDList) {
+            if (!webSocketsDic[id] || !this.playerController.players[id].online) { continue; }
+            webSocketsDic[id].send(JSON.stringify({
+                type: "update_player",
+                player: {
+                    id: player.id,
+                    x: Number(player.x.toFixed(1)),
+                    y: Number(player.y.toFixed(1))
+                }
+            }));
+        }
+    }
+
+    checkPlayerCollision(targetPlayerPos) {
+        const halfW = PLAYER_WIDTH / 2;
+        const halfH = PLAYER_HEIGHT / 2;
+        let blocked = false;
+        const samplePoints = [
+            { x: targetPlayerPos.x - halfW, y: targetPlayerPos.y - halfH },
+            { x: targetPlayerPos.x + halfW, y: targetPlayerPos.y - halfH },
+            { x: targetPlayerPos.x - halfW, y: targetPlayerPos.y + halfH },
+            { x: targetPlayerPos.x + halfW, y: targetPlayerPos.y + halfH },
+            { x: targetPlayerPos.x, y: targetPlayerPos.y }
+        ];
+        for (const pt of samplePoints) {
+            const tile = this.map.getMouseAimingTile(pt.x, pt.y);
+            if (tile && tile.upperBlock && tile.upperBlock.hasCollisionBox) {
+                blocked = true;
+                break;
+            }
+        }
+        return blocked;
     }
 
     handleBlockDigging(player, playerIDList, webSocketsDic) {
@@ -244,15 +298,7 @@ class Level {
             }
 
             // 游戏自身逻辑更新
-            const playerPosMessage = player.move();
-            if (playerPosMessage) {
-                for (const id of this.getAllPlayerID()) {
-                    if (webSocketsDic[id] && this.playerController.players[id].online) {
-                        webSocketsDic[id].send(JSON.stringify(playerPosMessage));
-                    }
-                }
-            }
-
+            this.handlePlayerMovement(player, playerIDList, webSocketsDic);
             this.handleBlockDigging(player, playerIDList, webSocketsDic);
             this.handleBlockPlacement(player, playerIDList, webSocketsDic);
         }

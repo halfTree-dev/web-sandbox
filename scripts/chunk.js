@@ -1,5 +1,5 @@
 const { TILE_WIDTH, TILE_HEIGHT, Tile } = require('./tiles');
-const Block = require('./block');
+const { Block, blockProperties } = require('./block');
 
 const CHUNK_WIDTH = 16;
 const CHUNK_HEIGHT = 16;

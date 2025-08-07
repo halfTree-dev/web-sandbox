@@ -2,7 +2,7 @@ const { createNoise2D } = require('simplex-noise');
 const alea = require('alea');
 const { CHUNK_WIDTH, CHUNK_HEIGHT, Chunk } = require('./chunk');
 const { TILE_WIDTH, TILE_HEIGHT } = require('./tiles');
-const Block = require('./block');
+const { Block, blockProperties } = require('./block');
 
 class MapCreator {
     constructor(seed) {

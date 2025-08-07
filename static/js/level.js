@@ -9,6 +9,9 @@ const TILE_HEIGHT = 64;
 const PLAYER_WIDTH = 50;
 const PLAYER_HEIGHT = 75;
 
+// 仅渲染距离玩家切比雪夫距离为该值之内的区块
+const RENDER_RADIUS = 2;
+
 function syncGlobalLevel(level) {
     Object.keys(level).forEach(key => {
         if (key !== 'type') {
@@ -34,6 +37,21 @@ function updatePlayer(player) {
             currLevel.players = {};
         }
         currLevel.players[player.id] = player;
+    }
+}
+
+function getChunkAndTileIndexByPos(x, y) {
+    const chunkX = Math.floor((x + TILE_WIDTH / 2) / (CHUNK_WIDTH * TILE_WIDTH));
+    const chunkY = Math.floor((y + TILE_HEIGHT / 2) / (CHUNK_HEIGHT * TILE_HEIGHT));
+    let tileX = Math.floor((x + TILE_WIDTH / 2) / TILE_WIDTH) % CHUNK_WIDTH;
+    if (tileX < 0) { tileX += CHUNK_WIDTH; }
+    let tileY = Math.floor((y + TILE_HEIGHT / 2) / TILE_HEIGHT) % CHUNK_HEIGHT;
+    if (tileY < 0) { tileY += CHUNK_HEIGHT; }
+    return {
+        chunkX : chunkX,
+        chunkY : chunkY,
+        tileX : tileX,
+        tileY : tileY
     }
 }
 
@@ -66,87 +84,115 @@ function render() {
     if (!currLevel || !currLevel.map) { return; }
     hideLobby();
 
-    const canvas = document.getElementById('gameCanvas');
-    camera.setDrawRangeByCanvas(canvas);
-    const ctx = canvas.getContext('2d');
-
     // 更新鼠标位置
     updateMousePositionInWorld(camera);
 
-    // 清空画布
+    const canvas = document.getElementById('gameCanvas');
+    camera.setDrawRangeByCanvas(canvas);
+    const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 渲染地图下部分
+    const focusedPlayer = currLevel.players ? currLevel.players[currLevel.player_id] : null;
+    moveCameraToFocusedPlayer(focusedPlayer);
+    const indexInfo = getChunkAndTileIndexByPos(focusedPlayer.x, focusedPlayer.y);
+
     if (currLevel.map && currLevel.map.chunkMap) {
-        Object.values(currLevel.map.chunkMap).forEach(chunk => {
-            chunk.tiles.forEach((row, tileY) => {
-                row.forEach((tile, tileX) => {
-                    const absolutePos = {
-                        x: chunk.x * CHUNK_WIDTH * TILE_WIDTH + tileX * TILE_WIDTH - TILE_WIDTH / 2,
-                        y: chunk.y * CHUNK_HEIGHT * TILE_HEIGHT + tileY * TILE_HEIGHT - TILE_HEIGHT / 2
-                    };
-                    const screenPos = camera.returnScalePos(absolutePos);
-                    if (tile.lowerBlock) {
-                        const lowerBlockImage = searchImage(lowerBlockImages, tile.lowerBlock.name, tile.lowerBlock.mutate) || searchImage(lowerBlockImages, 'update', '0');
-                        ctx.drawImage(lowerBlockImage, screenPos.x, screenPos.y, TILE_WIDTH * camera.scale, TILE_HEIGHT * camera.scale);
-                    }
+        const playerChunkX = indexInfo.chunkX;
+        const playerChunkY = indexInfo.chunkY;
+        for (let chunkX = playerChunkX - RENDER_RADIUS; chunkX <= playerChunkX + RENDER_RADIUS; chunkX++) {
+            for (let chunkY = playerChunkY - RENDER_RADIUS; chunkY <= playerChunkY + RENDER_RADIUS; chunkY++) {
+                const chunkKey = `${chunkX},${chunkY}`;
+                const chunk = currLevel.map.chunkMap[chunkKey];
+                if (chunk) {
+                    chunk.tiles.forEach((row, tileY) => {
+                        row.forEach((tile, tileX) => {
+                            renderTile(tile, tileX, tileY, chunk.x, chunk.y, );
+                        });
+                    });
+                }
+            }
+        }
+    }
+    renderPointingTile();
+    renderPlayers();
+    camera.drawAllObjects(ctx);
 
-                    if (tile.upperBlock) {
-                        const upperBlockImage = searchImage(upperBlockImages, tile.upperBlock.name, tile.upperBlock.mutate) || searchImage(upperBlockImages, 'update', '0');
-                        ctx.drawImage(upperBlockImage, screenPos.x, screenPos.y, TILE_WIDTH * camera.scale, TILE_HEIGHT * camera.scale);
+    renderPlayerInfo(focusedPlayer, ctx);
+}
 
-                        if (tile.upperBlock.integrity !== 50) {
-                            ctx.font = '10px Arial';
-                            ctx.fillStyle = 'red';
-                            ctx.fillText(`HP: ${Math.round(tile.upperBlock.integrity)}`, screenPos.x + 5, screenPos.y + 15);
-                        }
-                    }
-                });
-            });
-        });
+function renderTile(tile, tileX, tileY, chunkX, chunkY, ) {
+    if (tile.lowerBlock) {
+        const lowerBlockImage = searchImage(lowerBlockImages, tile.lowerBlock.name, tile.lowerBlock.mutate) || searchImage(lowerBlockImages, 'update', '0');
+        const absolutePos = {
+            x: chunkX * CHUNK_WIDTH * TILE_WIDTH + tileX * TILE_WIDTH - TILE_WIDTH / 2,
+            y: chunkY * CHUNK_HEIGHT * TILE_HEIGHT + tileY * TILE_HEIGHT - TILE_HEIGHT / 2
+        };
+        camera.addDrawObject(new DrawObject(lowerBlockImage, absolutePos.x, absolutePos.y, TILE_WIDTH, TILE_HEIGHT, 0, 1));
     }
 
-    // 渲染鼠标指向的瓦片
+    if (tile.upperBlock) {
+        const upperBlockImage = searchImage(upperBlockImages, tile.upperBlock.name, tile.upperBlock.mutate) || searchImage(upperBlockImages, 'update', '0');
+        const absolutePos = {
+            x: chunkX * CHUNK_WIDTH * TILE_WIDTH + tileX * TILE_WIDTH - upperBlockImage.width / 2,
+            y: chunkY * CHUNK_HEIGHT * TILE_HEIGHT + tileY * TILE_HEIGHT - upperBlockImage.height + TILE_HEIGHT / 2
+        };
+        camera.addDrawObject(new DrawObject(upperBlockImage, absolutePos.x, absolutePos.y, upperBlockImage.width, upperBlockImage.height, 0, 2));
+    }
+}
+
+function renderPointingTile() {
     const mouseTile = getMouseAimingTile();
     const mouseTilePos = {
         x: mouseTile.x * TILE_WIDTH - TILE_WIDTH / 2,
         y: mouseTile.y * TILE_HEIGHT - TILE_HEIGHT / 2
     };
-    const mouseScreenPos = camera.returnScalePos(mouseTilePos);
-    ctx.drawImage(selectImage, mouseScreenPos.x, mouseScreenPos.y, TILE_WIDTH * camera.scale, TILE_HEIGHT * camera.scale);
+    camera.addDrawObject(new DrawObject(selectImage, mouseTilePos.x, mouseTilePos.y, TILE_WIDTH, TILE_HEIGHT, 0, 3));
+}
 
-    // 渲染玩家
+const lastPlayerRenderPos = {};
+function renderPlayers() {
     if (currLevel.players) {
         Object.values(currLevel.players).forEach(player => {
             if (!player.online) { return; }
-            const screenPos = camera.returnScalePos({ x: player.x - PLAYER_WIDTH / 2, y: player.y - PLAYER_HEIGHT });
-            ctx.drawImage(playerImage, screenPos.x, screenPos.y, PLAYER_WIDTH * camera.scale, PLAYER_HEIGHT * camera.scale);
-
-            // 调试：在玩家上方显示物品栏内容
-            const inventoryText = player.inventory.map((item, idx) => {
-                const selected = idx === player.selectIndex ? '[*]' : '';
-                return `${selected}${item.name} x${item.amount}`;
-            }).join(', ');
-            ctx.font = '12px Arial';
-            ctx.fillStyle = 'white';
-            ctx.fillText(inventoryText, screenPos.x, screenPos.y - 10);
-
-            // 显示当前选中索引
-            ctx.fillStyle = 'yellow';
-            ctx.fillText(`selectIndex: ${player.selectIndex}`, screenPos.x, screenPos.y - 25);
+            if (!lastPlayerRenderPos[player.id]) {
+                lastPlayerRenderPos[player.id] = { x: player.x, y: player.y };
+            } else {
+                const lerp = (start, end, t) => start + (end - start) * t;
+                const smooth = 0.25;
+                lastPlayerRenderPos[player.id].x = lerp(lastPlayerRenderPos[player.id].x, player.x, smooth);
+                lastPlayerRenderPos[player.id].y = lerp(lastPlayerRenderPos[player.id].y, player.y, smooth);
+            }
+            const absolutePos = {
+                x: lastPlayerRenderPos[player.id].x - playerImage.width / 2,
+                y: lastPlayerRenderPos[player.id].y - playerImage.height
+            };
+            camera.addDrawObject(new DrawObject(playerImage, absolutePos.x, absolutePos.y, PLAYER_WIDTH, PLAYER_HEIGHT, 0, 2));
         });
-    }
-
-    // 摄像机焦点聚焦于玩家
-    const focusPlayer = currLevel.players ? currLevel.players[currLevel.player_id] : null;
-    if (focusPlayer) {
-        // 线性插值使摄像机平滑跟随玩家
-        const lerp = (start, end, t) => start + (end - start) * t;
-        const followSpeed = 0.1;
-        camera.pos.x = lerp(camera.pos.x, focusPlayer.x, followSpeed);
-        camera.pos.y = lerp(camera.pos.y, focusPlayer.y, followSpeed);
     }
 }
 
-setInterval(render, 1000 / FPS);
+function moveCameraToFocusedPlayer(focusedPlayer) {
+    if (focusedPlayer) {
+        // 线性插值使摄像机平滑跟随玩家
+        const lerp = (start, end, t) => start + (end - start) * t;
+        const followSpeed = 0.1;
+        camera.pos.x = lerp(camera.pos.x, focusedPlayer.x, followSpeed);
+        camera.pos.y = lerp(camera.pos.y, focusedPlayer.y, followSpeed);
+    }
+}
 
+function renderPlayerInfo(focusedPlayer, ctx) {
+    if (!focusedPlayer) return;
+    // 物品栏调试信息
+    const inventoryText = focusedPlayer.inventory.map((item, idx) => {
+        const selected = idx === focusedPlayer.selectIndex ? '[*]' : '';
+        return `${selected}${item.name} x${item.amount}`;
+    }).join(', ');
+    ctx.save();
+    ctx.font = '16px Arial';
+    ctx.fillStyle = 'white';
+    ctx.fillText(`物品栏: ${inventoryText}`, 20, 30);
+    ctx.restore();
+}
+
+setInterval(render, 1000 / FPS);

@@ -1,0 +1,6 @@
+{
+    "brick": {
+        "integrity": 50,
+        "hasCollisionBox": true
+    }
+}

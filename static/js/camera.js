@@ -12,6 +12,12 @@ class Camera {
         this.scale = scale || 1;
         this.drawRange = drawRange || { width: 800, height: 600 };
         this.cameraRange = cameraRange || { width: 800, height: 600 };
+
+        this.drawList = [];
+    }
+
+    addDrawObject(drawObject) {
+        this.drawList.push(drawObject);
     }
 
     setDrawRangeByCanvas(canvas) {
@@ -67,5 +73,59 @@ class Camera {
             x: this.pos.x + (this.cameraRange.width / 2) * swiftRatio.x / this.scale,
             y: this.pos.y + (this.cameraRange.height / 2) * swiftRatio.y / this.scale
         };
+    }
+
+    drawAllObjects(ctx) {
+        this.drawList.sort((a, b) => {
+            if (a.layer !== b.layer) {
+                return a.layer - b.layer;
+            }
+            return (a.posY + a.sizeY) - (b.posY + b.sizeY);
+        });
+        this.drawList.forEach(obj => {
+            const drawPos = this.returnScalePos({ x: obj.posX, y: obj.posY });
+            ctx.save();
+            ctx.globalAlpha = 1 - obj.transparency;
+            if (obj.angle !== 0) {
+                ctx.translate(drawPos.x + obj.sizeX * this.scale / 2, drawPos.y + obj.sizeY * this.scale / 2);
+                ctx.rotate(obj.angle);
+                ctx.drawImage(
+                    obj.image,
+                    -obj.sizeX * this.scale / 2,
+                    -obj.sizeY * this.scale / 2,
+                    obj.sizeX * this.scale,
+                    obj.sizeY * this.scale
+                );
+            } else {
+                ctx.drawImage(
+                    obj.image,
+                    drawPos.x,
+                    drawPos.y,
+                    obj.sizeX * this.scale,
+                    obj.sizeY * this.scale
+                );
+            }
+            ctx.restore();
+        });
+        this.drawList = [];
+    }
+}
+
+class DrawObject {
+    constructor(image, posX, posY, sizeX=-1, sizeY=-1, angle=0, layer=1) {
+        this.image = image;
+        this.posX = posX;
+        this.posY = posY;
+        if (sizeX === -1 || sizeY === -1) {
+            this.sizeX = this.image.width;
+            this.sizeY = this.image.height;
+        }
+        else {
+            this.sizeX = sizeX;
+            this.sizeY = sizeY;
+        }
+        this.angle = angle;
+        this.layer = layer;
+        this.transparency = 0;
     }
 }
