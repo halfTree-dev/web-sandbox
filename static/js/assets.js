@@ -36,4 +36,4 @@ const selectImage = new Image();
 selectImage.src = '/assets/hud/select.png';
 
 const playerImage = new Image();
-playerImage.src = '/assets/player/player.png';
+playerImage.src = '/assets/player/player_idle.png';

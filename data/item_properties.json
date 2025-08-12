@@ -1,19 +1,4 @@
 {
-    "sand": {
-        "stack_amount": 64,
-        "attack": {
-            "damage": 1,
-            "speed": 0.8
-        },
-        "dig": {
-            "power": 50
-        },
-        "place": {
-            "block": "sand",
-            "mutate": 0,
-            "cost": 1
-        }
-    },
     "brick": {
         "stack_amount": 64,
         "attack": {

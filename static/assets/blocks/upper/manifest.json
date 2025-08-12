@@ -1,52 +1,6 @@
 {
   "assets": [
     {
-      "id": "dirt",
-      "src": [
-        {"mutate": 0, "src": "/assets/blocks/upper/dirt.png"},
-        {"mutate": 1, "src": "/assets/blocks/upper/deep_dirt.png"},
-        {"mutate": 2, "src": "/assets/blocks/upper/dry_dirt.png"},
-        {"mutate": 3, "src": "/assets/blocks/upper/frozen_dirt.png"}
-      ]
-    },
-    {
-      "id": "grass",
-      "src": [
-        {"mutate": 0, "src": "/assets/blocks/upper/plain_grass.png"},
-        {"mutate": 1, "src": "/assets/blocks/upper/plain_grass_2.png"},
-        {"mutate": 2, "src": "/assets/blocks/upper/forest_grass.png"},
-        {"mutate": 3, "src": "/assets/blocks/upper/swamp_grass.png"}
-      ]
-    },
-    {
-      "id": "rock",
-      "src": [
-        {"mutate": 0, "src": "/assets/blocks/upper/rock.png"},
-        {"mutate": 1, "src": "/assets/blocks/upper/rock_2.png"},
-        {"mutate": 2, "src": "/assets/blocks/upper/rock_3.png"},
-        {"mutate": 3, "src": "/assets/blocks/upper/frozen_rock.png"}
-      ]
-    },
-    {
-      "id": "sand",
-      "src": [
-        {"mutate": 0, "src": "/assets/blocks/upper/sand.png"},
-        {"mutate": 1, "src": "/assets/blocks/upper/sand_2.png"}
-      ]
-    },
-    {
-      "id": "water",
-      "src": [
-        {"mutate": 0, "src": "/assets/blocks/upper/water.png"}
-      ]
-    },
-    {
-      "id": "snow",
-      "src": [
-        {"mutate": 0, "src": "/assets/blocks/upper/snow.png"}
-      ]
-    },
-    {
       "id": "brick",
       "src": [
         {"mutate": 0, "src": "/assets/blocks/upper/brick.png"}
@@ -55,7 +9,7 @@
     {
       "id": "update",
       "src": [
-        {"mutate": 0, "src": "/assets/blocks/upper/update.png"}
+        {"mutate": 0, "src": "/assets/blocks/lower/update.png"}
       ]
     }
   ]

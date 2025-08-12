@@ -80,31 +80,27 @@ class Camera {
             if (a.layer !== b.layer) {
                 return a.layer - b.layer;
             }
-            return (a.posY + a.sizeY) - (b.posY + b.sizeY);
+            return a.posY - b.posY;
         });
         this.drawList.forEach(obj => {
             const drawPos = this.returnScalePos({ x: obj.posX, y: obj.posY });
             ctx.save();
-            ctx.globalAlpha = 1 - obj.transparency;
-            if (obj.angle !== 0) {
-                ctx.translate(drawPos.x + obj.sizeX * this.scale / 2, drawPos.y + obj.sizeY * this.scale / 2);
-                ctx.rotate(obj.angle);
-                ctx.drawImage(
-                    obj.image,
-                    -obj.sizeX * this.scale / 2,
-                    -obj.sizeY * this.scale / 2,
-                    obj.sizeX * this.scale,
-                    obj.sizeY * this.scale
-                );
-            } else {
-                ctx.drawImage(
-                    obj.image,
-                    drawPos.x,
-                    drawPos.y,
-                    obj.sizeX * this.scale,
-                    obj.sizeY * this.scale
-                );
-            }
+
+            ctx.translate(drawPos.x, drawPos.y);
+            ctx.rotate(obj.angle);
+            ctx.scale(obj.horFlip ? -obj.scaleX : obj.scaleX,
+                obj.verFlip ? -obj.scaleY : obj.scaleY
+            );
+
+            obj.currFrame = obj.currFrame % (obj.rows * obj.columns);
+            const sourceWidth = obj.image.width / obj.columns;
+            const sourceHeight = obj.image.height / obj.rows;
+            const sourceX = (obj.currFrame % obj.columns) * sourceWidth;
+            const sourceY = Math.floor(obj.currFrame / obj.columns) * sourceHeight;
+
+            ctx.drawImage(obj.image, sourceX, sourceY, sourceWidth, sourceHeight,
+                -obj.anchorX * this.scale, -obj.anchorY * this.scale, sourceWidth * this.scale, sourceHeight * this.scale);
+
             ctx.restore();
         });
         this.drawList = [];
@@ -112,20 +108,24 @@ class Camera {
 }
 
 class DrawObject {
-    constructor(image, posX, posY, sizeX=-1, sizeY=-1, angle=0, layer=1) {
+    constructor(image, posX, posY,
+        rows=1, columns=1, currFrame=0,
+        anchorX=0, anchorY=0,
+        scaleX=1, scaleY=1, angle=0, layer=1,
+        horFlip=false, verFlip=false) {
         this.image = image;
         this.posX = posX;
         this.posY = posY;
-        if (sizeX === -1 || sizeY === -1) {
-            this.sizeX = this.image.width;
-            this.sizeY = this.image.height;
-        }
-        else {
-            this.sizeX = sizeX;
-            this.sizeY = sizeY;
-        }
+        this.rows = rows;
+        this.columns = columns;
+        this.currFrame = currFrame;
+        this.anchorX = anchorX;
+        this.anchorY = anchorY;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
         this.angle = angle;
         this.layer = layer;
-        this.transparency = 0;
+        this.horFlip = horFlip;
+        this.verFlip = verFlip;
     }
 }

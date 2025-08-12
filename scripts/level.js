@@ -1,8 +1,10 @@
 const Map = require('./map');
 const PlayerController = require('./playerController');
+const { EntityController } = require('./entityController');
 const { Item, itemProperties } = require('./item');
 const { CHUNK_WIDTH, CHUNK_HEIGHT, Chunk } = require('./chunk');
-const { PLAYER_WIDTH, PLAYER_HEIGHT, Player } = require('./player');
+const { PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_MODEL_WIDTH, PLAYER_MODEL_HEIGHT, Player } = require('./player');
+const { Entity } = require('./entity');
 const { Block, blockProperties } = require('./block');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -17,6 +19,7 @@ class Level {
         this.name = name;
         this.map = new Map();
         this.playerController = new PlayerController();
+        this.entityController = new EntityController();
 
         this.currSaveCountdown = SAVE_INTERVAL;
     }
@@ -25,6 +28,7 @@ class Level {
     start() {
         this.map = new Map();
         this.playerController = new PlayerController();
+        this.entityController = new EntityController();
         console.log(`${this.name} 开始了！`);
         this.loadLevel(this.name);
     }
@@ -51,7 +55,8 @@ class Level {
                 id: this.id,
                 name: this.name,
                 map: this.map,
-                players: this.playerController.players
+                players: this.playerController.players,
+                entities: this.entityController.entities
             };
             if (webSocketsDic[id] && this.playerController.players[id].online) {
                 console.log(`发送全局同步消息给玩家 ${id}`);
@@ -78,6 +83,27 @@ class Level {
                         }));
                     }
                 }
+            }
+        }
+    }
+
+    handleMouseUpdate(player, playerIDList, webSocketsDic, action) {
+        player.mousePosX = action.x;
+        player.mousePosY = action.y;
+        const shiftX = player.mousePosX - player.x;
+        const shiftY = player.mousePosY - (player.y - PLAYER_MODEL_HEIGHT / 2);
+        let mouseAngle = Math.atan2(shiftY, shiftX);
+        if (mouseAngle < 0) { mouseAngle += 2 * Math.PI; }
+        player.mouseAngle = mouseAngle;
+        for (const id of playerIDList) {
+            if (webSocketsDic[id] && this.playerController.players[id].online) {
+                webSocketsDic[id].send(JSON.stringify({
+                    type: "update_player",
+                    player: {
+                        id: player.id,
+                        mouseAngle: player.mouseAngle
+                    }
+                }))
             }
         }
     }
@@ -279,8 +305,7 @@ class Level {
                         break;
 
                     case "mouse_pos":
-                        player.mousePosX = action.x;
-                        player.mousePosY = action.y;
+                        this.handleMouseUpdate(player, playerIDList, webSocketsDic, action);
                         break;
 
                     case "mouse":
@@ -303,6 +328,12 @@ class Level {
             this.handleBlockPlacement(player, playerIDList, webSocketsDic);
         }
         this.handlePlayerOffline(playerIDList, webSocketsDic);
+
+        for (const entityID in this.entityController.entities) {
+            const entity = this.entityController.entities[entityID];
+            // 后续在此添加更新逻辑
+        }
+
         this.handleLevelSave();
     }
 
@@ -337,6 +368,15 @@ class Level {
                 this.playerController.players[playerId] = player;
             }
 
+            // 重新实例化 entityController 和 entities
+            this.entityController = new EntityController();
+            for (const entityId in levelData.entityController.entities) {
+                const entityData = levelData.entityController.entities[entityId];
+                const entity = new Entity(entityData.id, entityData.type, entityData.x, entityData.y);
+                Object.assign(entity, entityData);
+                this.entityController.entities[entityId] = entity;
+            }
+
             console.log(`关卡 ${name} 已从 ${filePath} 加载`);
         } else {
             console.error(`关卡 ${name} 的数据文件不存在：${filePath}，即将新建关卡。`);
@@ -355,7 +395,8 @@ class Level {
             id: this.id,
             name: this.name,
             map: this.map,
-            playerController: this.playerController
+            playerController: this.playerController,
+            entityController: this.entityController
         };
 
         const filePath = path.join(levelDir, 'level.json');

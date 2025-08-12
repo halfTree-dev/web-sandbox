@@ -1,10 +1,12 @@
 const { Item, itemProperties } = require('./item');
-const { v4: uuidv4 } = require('uuid');
 
 const TPS = 30;
 
-const PLAYER_WIDTH = 45;
+const PLAYER_WIDTH = 52;
 const PLAYER_HEIGHT = 10;
+
+const PLAYER_MODEL_WIDTH = 64;
+const PLAYER_MODEL_HEIGHT = 68;
 
 class Player {
     constructor(id, name, x, y) {
@@ -27,6 +29,7 @@ class Player {
         this.leftInteract = false;
         this.rightInteract = false;
         this.keyStates = {};
+        this.mouseAngle = 0;
 
         // 玩家操作队列
         this.actionQueue = [];
@@ -55,6 +58,7 @@ class Player {
         return this.actionQueue.shift() || null;
     }
 
+    // 返回值为 0 则全部添加完毕，不为 0 则数值为未能添加的物品个数
     addItem(item) {
         const itemProperty = itemProperties[item.name];
         if (!itemProperty) return false; // 如果物品属性不存在，返回失败
@@ -73,20 +77,20 @@ class Player {
                     remainingAmount -= toAdd;
                 }
 
-                if (remainingAmount === 0) return true;
+                if (remainingAmount === 0) return 0;
             }
         }
 
         // 如果还有剩余物品，尝试新建堆叠
         while (remainingAmount > 0) {
-            if (this.inventory.length >= this.maxSpace) return false; // 背包已满
+            if (this.inventory.length >= this.maxSpace) return remainingAmount; // 背包已满
 
             const toAdd = Math.min(remainingAmount, itemProperty.stack_amount);
             this.inventory.push(new Item(item.name, toAdd));
             remainingAmount -= toAdd;
         }
 
-        return true;
+        return 0;
     }
 
     checkItem(item) {
@@ -160,4 +164,4 @@ class Player {
     }
 }
 
-module.exports = { PLAYER_WIDTH, PLAYER_HEIGHT, Player };
+module.exports = { PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_MODEL_WIDTH, PLAYER_MODEL_HEIGHT, Player };

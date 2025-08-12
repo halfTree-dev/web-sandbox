@@ -1,13 +1,14 @@
 let currLevel = {};
 const FPS = 60;
+let currFrame = 0;
 
 const CHUNK_WIDTH = 16;
 const CHUNK_HEIGHT = 16;
 const TILE_WIDTH = 64;
 const TILE_HEIGHT = 64;
 
-const PLAYER_WIDTH = 50;
-const PLAYER_HEIGHT = 75;
+const PLAYER_WIDTH = 64;
+const PLAYER_HEIGHT = 68;
 
 // 仅渲染距离玩家切比雪夫距离为该值之内的区块
 const RENDER_RADIUS = 2;
@@ -82,6 +83,7 @@ const camera = new Camera(
 
 function render() {
     if (!currLevel || !currLevel.map) { return; }
+    currFrame++;
     hideLobby();
 
     // 更新鼠标位置
@@ -124,29 +126,32 @@ function renderTile(tile, tileX, tileY, chunkX, chunkY, ) {
     if (tile.lowerBlock) {
         const lowerBlockImage = searchImage(lowerBlockImages, tile.lowerBlock.name, tile.lowerBlock.mutate) || searchImage(lowerBlockImages, 'update', '0');
         const absolutePos = {
-            x: chunkX * CHUNK_WIDTH * TILE_WIDTH + tileX * TILE_WIDTH - TILE_WIDTH / 2,
-            y: chunkY * CHUNK_HEIGHT * TILE_HEIGHT + tileY * TILE_HEIGHT - TILE_HEIGHT / 2
+            x: chunkX * CHUNK_WIDTH * TILE_WIDTH + tileX * TILE_WIDTH,
+            y: chunkY * CHUNK_HEIGHT * TILE_HEIGHT + tileY * TILE_HEIGHT
         };
-        camera.addDrawObject(new DrawObject(lowerBlockImage, absolutePos.x, absolutePos.y, TILE_WIDTH, TILE_HEIGHT, 0, 1));
+        camera.addDrawObject(new DrawObject(
+            lowerBlockImage, absolutePos.x, absolutePos.y, 1, 1, 0, TILE_WIDTH / 2, TILE_HEIGHT / 2, 1, 1, 0, 1, false, false));
     }
 
     if (tile.upperBlock) {
         const upperBlockImage = searchImage(upperBlockImages, tile.upperBlock.name, tile.upperBlock.mutate) || searchImage(upperBlockImages, 'update', '0');
         const absolutePos = {
-            x: chunkX * CHUNK_WIDTH * TILE_WIDTH + tileX * TILE_WIDTH - upperBlockImage.width / 2,
-            y: chunkY * CHUNK_HEIGHT * TILE_HEIGHT + tileY * TILE_HEIGHT - upperBlockImage.height + TILE_HEIGHT / 2
+            x: chunkX * CHUNK_WIDTH * TILE_WIDTH + tileX * TILE_WIDTH,
+            y: chunkY * CHUNK_HEIGHT * TILE_HEIGHT + tileY * TILE_HEIGHT
         };
-        camera.addDrawObject(new DrawObject(upperBlockImage, absolutePos.x, absolutePos.y, upperBlockImage.width, upperBlockImage.height, 0, 2));
+        camera.addDrawObject(new DrawObject(
+            upperBlockImage, absolutePos.x, absolutePos.y, 1, 1, 0, upperBlockImage.width / 2, upperBlockImage.height - TILE_HEIGHT / 2, 1, 1, 0, 2, false, false));
     }
 }
 
 function renderPointingTile() {
     const mouseTile = getMouseAimingTile();
     const mouseTilePos = {
-        x: mouseTile.x * TILE_WIDTH - TILE_WIDTH / 2,
-        y: mouseTile.y * TILE_HEIGHT - TILE_HEIGHT / 2
+        x: mouseTile.x * TILE_WIDTH,
+        y: mouseTile.y * TILE_HEIGHT
     };
-    camera.addDrawObject(new DrawObject(selectImage, mouseTilePos.x, mouseTilePos.y, TILE_WIDTH, TILE_HEIGHT, 0, 3));
+    camera.addDrawObject(new DrawObject(
+        selectImage, mouseTilePos.x, mouseTilePos.y, 1, 1, 0, TILE_WIDTH / 2, TILE_HEIGHT / 2, 1, 1, 0, 3, false, false));
 }
 
 const lastPlayerRenderPos = {};
@@ -154,6 +159,10 @@ function renderPlayers() {
     if (currLevel.players) {
         Object.values(currLevel.players).forEach(player => {
             if (!player.online) { return; }
+            let playerFlip = false;
+            if (player.mouseAngle) {
+                playerFlip = player.mouseAngle > Math.PI / 2 && player.mouseAngle < 3 * Math.PI / 2;
+            }
             if (!lastPlayerRenderPos[player.id]) {
                 lastPlayerRenderPos[player.id] = { x: player.x, y: player.y };
             } else {
@@ -163,10 +172,12 @@ function renderPlayers() {
                 lastPlayerRenderPos[player.id].y = lerp(lastPlayerRenderPos[player.id].y, player.y, smooth);
             }
             const absolutePos = {
-                x: lastPlayerRenderPos[player.id].x - playerImage.width / 2,
-                y: lastPlayerRenderPos[player.id].y - playerImage.height
+                x: lastPlayerRenderPos[player.id].x,
+                y: lastPlayerRenderPos[player.id].y
             };
-            camera.addDrawObject(new DrawObject(playerImage, absolutePos.x, absolutePos.y, PLAYER_WIDTH, PLAYER_HEIGHT, 0, 2));
+            const playerFrame = Math.floor(currFrame / FPS * 3);
+            camera.addDrawObject(new DrawObject(
+                playerImage, absolutePos.x, absolutePos.y, 1, 2, playerFrame, playerImage.width / 2 / 2, playerImage.height, 1, 1, 0, 2, playerFlip, false));
         });
     }
 }

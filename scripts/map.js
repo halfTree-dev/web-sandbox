@@ -11,7 +11,7 @@ class Map {
     }
 
     spawnNewMap() {
-        const seed = "what the hell";
+        const seed = "nwpu";
         this.chunkMap = new MapCreator(seed).spawnChunkMap(PRE_CREATE_MAP_WIDTH, PRE_CREATE_MAP_HEIGHT);
     }
 

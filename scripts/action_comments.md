@@ -114,6 +114,20 @@
     - player : Player
         玩家对象，必然包含 id 字段，其它字段可选是否包含，更新时所包含字段将会覆盖旧的字段
 
+- update_entity
+
+    服务器响应实体更新，发送实体的最新状态。
+
+    - entity : Entity
+        更新后的 Entity 对象，包含其坐标和属性。
+
+- delete_entity
+
+    服务器广播删除实体更新，发送删除结果。
+
+    - entity_id : str
+        被删除的实体的 UUID。
+
 - update_tile
 
     服务器响应地图块更新，发送地图块的最新状态。

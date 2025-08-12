@@ -1,0 +1,9 @@
+{
+    "arrow": {
+        "projectile": {
+            "damage": 1,
+            "speed": 500,
+            "life_time": 5
+        }
+    }
+}
