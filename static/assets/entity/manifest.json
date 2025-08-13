@@ -1,0 +1,17 @@
+{
+  "assets": [
+    {
+      "id": "arrow",
+      "src": [
+        {
+            "mutate": 0,
+            "src": "/assets/entity/arrow.png",
+            "rows": 1,
+            "columns": 1,
+            "anchorX": 24,
+            "anchorY": 8
+        }
+      ]
+    }
+  ]
+}

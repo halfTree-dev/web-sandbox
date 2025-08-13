@@ -52,6 +52,14 @@ socket.addEventListener('message', (event) => {
                     updateTile(data.chunkX, data.chunkY, data.tile);
                     break;
 
+                case 'update_entity':
+                    updateEntity(data.entity);
+                    break;
+
+                case 'delete_entity':
+                    deleteEntity(data.entity_id);
+                    break;
+
                 default:
                     logMessage(`[未知类型] 收到未知类型的消息: ${data.type}`);
                     break;

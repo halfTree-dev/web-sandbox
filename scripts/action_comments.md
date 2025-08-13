@@ -96,6 +96,8 @@
         包含地图信息的 Map 对象
     - players : Dict[Player]
         所有玩家的信息列表。
+    - entities : Dict[Entity]
+        所有实体的信息列表。
 
 - chat
 

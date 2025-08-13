@@ -1,4 +1,4 @@
-const { Entity } = require('./entity');
+const { Entity, entityProperties } = require('./entity');
 
 class EntityController {
     constructor() {

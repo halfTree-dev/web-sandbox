@@ -1,5 +1,6 @@
 const lowerBlockImages = {};
 const upperBlockImages = {};
+const entityImages = {};
 
 function loadImagesFromManifest(manifestPath, targetDict) {
     fetch(manifestPath)
@@ -19,6 +20,7 @@ function loadImagesFromManifest(manifestPath, targetDict) {
 
 loadImagesFromManifest('/assets/blocks/lower/manifest.json', lowerBlockImages);
 loadImagesFromManifest('/assets/blocks/upper/manifest.json', upperBlockImages);
+loadImagesFromManifest('/assets/entity/manifest.json', entityImages);
 
 function searchImage(images, name, mutate) {
     if (images[name]) {

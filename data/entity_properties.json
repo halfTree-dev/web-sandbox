@@ -1,9 +1,8 @@
 {
     "arrow": {
-        "projectile": {
-            "damage": 1,
-            "speed": 500,
-            "life_time": 5
-        }
+        "actionAI": "projectile",
+        "hasCollision": true,
+        "width": 8,
+        "height": 8
     }
 }

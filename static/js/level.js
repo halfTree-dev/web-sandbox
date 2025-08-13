@@ -41,6 +41,32 @@ function updatePlayer(player) {
     }
 }
 
+function updateEntity(entity) {
+    if (currLevel.entities && currLevel.entities[entity.id]) {
+        Object.keys(entity).forEach(key => {
+            if (typeof entity[key] === 'object') {
+                Object.keys(entity[key]).forEach(subKey => {
+                    currLevel.entities[entity.id][key][subKey] = entity[key][subKey];
+                });
+            } else {
+                currLevel.entities[entity.id][key] = entity[key];
+            }
+        });
+    } else {
+        // 如果实体不存在，添加到字典中
+        if (!currLevel.entities) {
+            currLevel.entities = {};
+        }
+        currLevel.entities[entity.id] = entity;
+    }
+}
+
+function deleteEntity(entityId) {
+    if (currLevel.entities && currLevel.entities[entityId]) {
+        delete currLevel.entities[entityId];
+    }
+}
+
 function getChunkAndTileIndexByPos(x, y) {
     const chunkX = Math.floor((x + TILE_WIDTH / 2) / (CHUNK_WIDTH * TILE_WIDTH));
     const chunkY = Math.floor((y + TILE_HEIGHT / 2) / (CHUNK_HEIGHT * TILE_HEIGHT));
@@ -117,6 +143,7 @@ function render() {
     }
     renderPointingTile();
     renderPlayers();
+    renderEntities();
     camera.drawAllObjects(ctx);
 
     renderPlayerInfo(focusedPlayer, ctx);
@@ -178,6 +205,39 @@ function renderPlayers() {
             const playerFrame = Math.floor(currFrame / FPS * 3);
             camera.addDrawObject(new DrawObject(
                 playerImage, absolutePos.x, absolutePos.y, 1, 2, playerFrame, playerImage.width / 2 / 2, playerImage.height, 1, 1, 0, 2, playerFlip, false));
+        });
+    }
+}
+
+const lastEntityRenderPos = {};
+function renderEntities() {
+    if (currLevel.entities) {
+        Object.values(currLevel.entities).forEach(entity => {
+            const entityImage = searchImage(entityImages, entity.name, entity.mutate || 0) || searchImage(entityImages, 'update', '0');
+            if (!entityImage) {
+                console.warn(`未找到实体图像: ${entity.name}`);
+                return;
+            }
+
+            if (!lastEntityRenderPos[entity.id]) {
+                lastEntityRenderPos[entity.id] = { x: entity.x, y: entity.y };
+            } else {
+                const lerp = (start, end, t) => start + (end - start) * t;
+                const smooth = 0.25;
+                lastEntityRenderPos[entity.id].x = lerp(lastEntityRenderPos[entity.id].x, entity.x, smooth);
+                lastEntityRenderPos[entity.id].y = lerp(lastEntityRenderPos[entity.id].y, entity.y, smooth);
+            }
+
+            const absolutePos = {
+                x: lastEntityRenderPos[entity.id].x,
+                y: lastEntityRenderPos[entity.id].y
+            };
+            const entityRows = entity.rows || 1;
+            const entityColumns = entity.columns || 1;
+            const entityAnchorX = entity.anchorX || 0;
+            const entityAnchorY = entity.anchorY || 0;
+            camera.addDrawObject(new DrawObject(
+                entityImage, absolutePos.x, absolutePos.y, entityColumns, entityRows, 0, entityAnchorX, entityAnchorY, 1, 1, entity.angle || 0, 2, false, false));
         });
     }
 }

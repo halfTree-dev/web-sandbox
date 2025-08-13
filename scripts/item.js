@@ -5,6 +5,7 @@ class Item {
     constructor(name, amount) {
         this.name = name;
         this.amount = amount || 1;
+        this.coldDown = 0;
     }
 }
 
